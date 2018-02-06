@@ -1,11 +1,17 @@
 import Foundation
 import AVFoundation
 
+protocol AudioIOBufferDelegate: class {
+    func appendAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer)
+}
+
 final class AudioIOComponent: IOComponent {
     lazy var encoder: AACEncoder = AACEncoder()
     lazy var playback: AudioStreamPlayback = AudioStreamPlayback()
     let lockQueue: DispatchQueue = DispatchQueue(label: "com.haishinkit.HaishinKit.AudioIOComponent.lock")
-
+    
+    weak var delegate: AudioIOBufferDelegate?
+    
 #if os(iOS) || os(macOS)
     var input: AVCaptureDeviceInput? {
         didSet {
@@ -48,6 +54,7 @@ final class AudioIOComponent: IOComponent {
     }
 
     func appendSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
+        delegate?.appendAudioSampleBuffer(sampleBuffer)
         mixer?.recorder.appendSampleBuffer(sampleBuffer, mediaType: .audio)
         encoder.encodeSampleBuffer(sampleBuffer)
     }

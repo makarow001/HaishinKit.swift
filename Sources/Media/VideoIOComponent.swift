@@ -2,12 +2,8 @@ import CoreImage
 import Foundation
 import AVFoundation
 
-protocol VideoIOBufferDelegate:class {
+protocol VideoIOBufferDelegate: class {
     func appendVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer)
-}
-
-extension VideoIOComponent {    
-    weak var delegate: VideoIOBufferDelegate?
 }
 
 final class VideoIOComponent: IOComponent {
@@ -28,7 +24,8 @@ final class VideoIOComponent: IOComponent {
     }()
 
     var effects: [VisualEffect] = []
-
+    weak var delegate: VideoIOBufferDelegate?
+    
 #if os(iOS) || os(macOS)
     var fps: Float64 = AVMixer.defaultFPS {
         didSet {

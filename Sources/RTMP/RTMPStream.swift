@@ -553,6 +553,18 @@ open class RTMPStream: NetStream {
         super.appendSampleBuffer(sampleBuffer, withType: withType, options: options)
     }
 
+    open func startTranslateBuffers() {
+        lockQueue.async {
+            self.mixer.startRunning()
+        }
+    }
+    
+    open func stopTranslateBuffers() {
+        lockQueue.async {
+            self.mixer.stopRunning()
+        }
+    }
+    
     open func appendFile(_ file: URL, completionHandler: MP4Sampler.Handler? = nil) {
         lockQueue.async {
             if self.sampler == nil {
