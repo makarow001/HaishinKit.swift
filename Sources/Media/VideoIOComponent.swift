@@ -24,7 +24,7 @@ public class VideoIOComponent: IOComponent {
     }()
 
     var effects: [VisualEffect] = []
-    weak var delegate: VideoIOBufferDelegate?
+    public weak var delegate: VideoIOBufferDelegate?
     
 #if os(iOS) || os(macOS)
     var fps: Float64 = AVMixer.defaultFPS {
