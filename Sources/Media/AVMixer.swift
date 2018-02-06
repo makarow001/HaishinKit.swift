@@ -98,11 +98,11 @@ extension AVMixer {
 }
 
 extension AVMixer {
-    final func startPlaying() {
+    open func startPlaying() {
         audioIO.playback.startRunning()
         videoIO.queue.startRunning()
     }
-    final func stopPlaying() {
+    open func stopPlaying() {
         audioIO.playback.stopRunning()
         videoIO.queue.stopRunning()
     }

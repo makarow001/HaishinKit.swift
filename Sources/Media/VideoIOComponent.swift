@@ -2,6 +2,14 @@ import CoreImage
 import Foundation
 import AVFoundation
 
+protocol VideoIOBufferDelegate:class {
+    func appendVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer)
+}
+
+extension VideoIOComponent {    
+    weak var delegate: VideoIOBufferDelegate?
+}
+
 final class VideoIOComponent: IOComponent {
     let lockQueue: DispatchQueue = DispatchQueue(label: "com.haishinkit.HaishinKit.VideoIOComponent.lock")
     var context: CIContext?
@@ -316,6 +324,7 @@ final class VideoIOComponent: IOComponent {
             presentationTimeStamp: sampleBuffer.presentationTimeStamp,
             duration: sampleBuffer.duration
         )
+        delegate?.appendVideoSampleBuffer(sampleBuffer)
         drawable?.draw(image: image)
         mixer?.recorder.appendSampleBuffer(sampleBuffer, mediaType: .video)
     }
