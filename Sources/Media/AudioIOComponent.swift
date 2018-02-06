@@ -1,16 +1,16 @@
 import Foundation
 import AVFoundation
 
-protocol AudioIOBufferDelegate: class {
+public protocol AudioIOBufferDelegate: class {
     func appendAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer)
 }
 
-final class AudioIOComponent: IOComponent {
+public class AudioIOComponent: IOComponent {
     lazy var encoder: AACEncoder = AACEncoder()
     lazy var playback: AudioStreamPlayback = AudioStreamPlayback()
     let lockQueue: DispatchQueue = DispatchQueue(label: "com.haishinkit.HaishinKit.AudioIOComponent.lock")
     
-    weak var delegate: AudioIOBufferDelegate?
+    public weak var delegate: AudioIOBufferDelegate?
     
 #if os(iOS) || os(macOS)
     var input: AVCaptureDeviceInput? {
@@ -26,7 +26,7 @@ final class AudioIOComponent: IOComponent {
             }
         }
     }
-
+    
     private var _output: AVCaptureAudioDataOutput?
     var output: AVCaptureAudioDataOutput! {
         get {
@@ -46,59 +46,60 @@ final class AudioIOComponent: IOComponent {
             _output = newValue
         }
     }
-#endif
-
+    #endif
+    
     override init(mixer: AVMixer) {
         super.init(mixer: mixer)
         encoder.lockQueue = lockQueue
     }
-
+    
     func appendSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
         delegate?.appendAudioSampleBuffer(sampleBuffer)
         mixer?.recorder.appendSampleBuffer(sampleBuffer, mediaType: .audio)
         encoder.encodeSampleBuffer(sampleBuffer)
     }
-
-#if os(iOS) || os(macOS)
+    
+    #if os(iOS) || os(macOS)
     func attachAudio(_ audio: AVCaptureDevice?, automaticallyConfiguresApplicationAudioSession: Bool) throws {
         guard let mixer: AVMixer = mixer else {
             return
         }
-
+        
         mixer.session.beginConfiguration()
         defer {
             mixer.session.commitConfiguration()
         }
-
+        
         output = nil
         encoder.invalidate()
-
+        
         guard let audio: AVCaptureDevice = audio else {
             input = nil
             return
         }
-
+        
         input = try AVCaptureDeviceInput(device: audio)
         #if os(iOS)
-        mixer.session.automaticallyConfiguresApplicationAudioSession = automaticallyConfiguresApplicationAudioSession
+            mixer.session.automaticallyConfiguresApplicationAudioSession = automaticallyConfiguresApplicationAudioSession
         #endif
         mixer.session.addOutput(output)
         output.setSampleBufferDelegate(self, queue: lockQueue)
     }
-
+    
     func dispose() {
         input = nil
         output = nil
     }
-#else
+    #else
     func dispose() {
     }
-#endif
+    #endif
 }
 
 extension AudioIOComponent: AVCaptureAudioDataOutputSampleBufferDelegate {
     // MARK: AVCaptureAudioDataOutputSampleBufferDelegate
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+    public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         appendSampleBuffer(sampleBuffer)
     }
 }
+

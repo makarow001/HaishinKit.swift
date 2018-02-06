@@ -47,13 +47,13 @@ extension VideoIOComponent {
 
 extension VideoIOComponent: ScreenCaptureOutputPixelBufferDelegate {
     // MARK: ScreenCaptureOutputPixelBufferDelegate
-    func didSet(size: CGSize) {
+    public func didSet(size: CGSize) {
         lockQueue.async {
             self.encoder.width = Int32(size.width)
             self.encoder.height = Int32(size.height)
         }
     }
-    func output(pixelBuffer: CVPixelBuffer, withPresentationTime: CMTime) {
+    public func output(pixelBuffer: CVPixelBuffer, withPresentationTime: CMTime) {
         if !effects.isEmpty {
             context?.render(effect(pixelBuffer), to: pixelBuffer)
         }

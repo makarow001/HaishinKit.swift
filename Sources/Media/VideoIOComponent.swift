@@ -2,11 +2,11 @@ import CoreImage
 import Foundation
 import AVFoundation
 
-protocol VideoIOBufferDelegate: class {
+public protocol VideoIOBufferDelegate: class {
     func appendVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer)
 }
 
-final class VideoIOComponent: IOComponent {
+public class VideoIOComponent: IOComponent {
     let lockQueue: DispatchQueue = DispatchQueue(label: "com.haishinkit.HaishinKit.VideoIOComponent.lock")
     var context: CIContext?
     var drawable: NetStreamDrawable?
@@ -361,7 +361,7 @@ final class VideoIOComponent: IOComponent {
 
 extension VideoIOComponent: AVCaptureVideoDataOutputSampleBufferDelegate {
     // MARK: AVCaptureVideoDataOutputSampleBufferDelegate
-    func captureOutput(_ captureOutput: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+    public func captureOutput(_ captureOutput: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         appendSampleBuffer(sampleBuffer)
     }
 }

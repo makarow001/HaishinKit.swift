@@ -63,11 +63,11 @@ final public class AVMixer: NSObject {
         dispose()
     }
 
-    private(set) lazy var audioIO: AudioIOComponent = {
+    private(set) open lazy var audioIO: AudioIOComponent = {
        return AudioIOComponent(mixer: self)
     }()
 
-    private(set) lazy var videoIO: VideoIOComponent = {
+    private(set) open lazy var videoIO: VideoIOComponent = {
        return VideoIOComponent(mixer: self)
     }()
 
